@@ -45,7 +45,7 @@ def read_pbm(file_name):
                 #Input is as string
                 if xiyj == '1':
                     #Coordinate starts from 0
-                    xyz.append((i+1,j+1,k+1))
+                    xyz.append([i+1,j+1,k+1])
     return xyz
 
 
@@ -111,8 +111,8 @@ if __name__ == '__main__':
     start = time.time()
 
     #Main routine
-    #xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
-    #write_xyz('result.xyz', xyz)
+    xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
+    write_xyz('result.xyz', xyz)
     #TODO Read automatically from image data
     with open('result_binary.xyz','rb') as f:
         xyz = pickle.load(f)
