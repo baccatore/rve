@@ -49,7 +49,6 @@ def read_pbm(file_name):
     return xyz
 
 
-@jit
 def load_images(address):
     xyz = []
     file_list = glob.glob(address)
@@ -60,8 +59,6 @@ def load_images(address):
         print('\rReading...', file_name, i+1, '/', nb_file, flush=True, end='')
     return xyz
 
-
-@jit
 def write_xyz(file_name, xyz, binary=False):
     print('\nWriting output...')
     with open('result.xyz','w') as f:
@@ -79,14 +76,14 @@ def count_cells(xyz, candidate_range, candidate_size):
     t1 = start
     nb_cell_in_candidate_ijk = np.ndarray(candidate_range)
     total = len(xyz)
-    for current, cell_xyz in enumerate(xyz):
+    trgt_grd_rng = np.zeros(6, dtype=np.int).reshape((3,2))
+    for current, cell_xyz in enumerate(map(np.array,xyz)):
         #target grid zone
         trgt_grd = cell_xyz - candidate_size
-        trgt_grd_rng = np.zeros(6, dtype=np.int).reshape((3,2))
         
         #approximately 500 msec per cell
         #for i in range(3):
-        #    #TODO revise following 3 lines
+            #TODO revise following 3 lines
         #    trgt_grd_rng[i][0] = trgt_grd[i]
         #    trgt_grd_rng[i][1] = cell_xyz[i]
         #    if trgt_grd_rng[i][0] < 0:
@@ -94,12 +91,30 @@ def count_cells(xyz, candidate_range, candidate_size):
         #    if trgt_grd_rng[i][1] > candidate_range[i]:
         #        trgt_grd_rng[i][1] = candidate_range[i]
 
-        #for i in range(trgt_grd_rng[0][0], trgt_grd_rng[0][1]):
+        #for k in range(trgt_grd_rng[2][0], trgt_grd_rng[2][1]):
         #    for j in range(trgt_grd_rng[1][0], trgt_grd_rng[1][1]):
-        #        for k in range(trgt_grd_rng[2][0], trgt_grd_rng[2][1]):
+        #        for i in range(trgt_grd_rng[0][0], trgt_grd_rng[0][1]):
+        #for i,j,k in itertools.product( \
+        #        range(trgt_grd_rng[0][0], trgt_grd_rng[0][1]), \
+        #        range(trgt_grd_rng[1][0], trgt_grd_rng[1][1]), \
+        #        range(trgt_grd_rng[2][0], trgt_grd_rng[2][1])):
         #            nb_cell_in_candidate_ijk[i][j][k] +=1
 
-        if current%100 == 0:
+        for i,j,k in itertools.product( \
+                range(candidate_range[0]), \
+                range(candidate_range[1]), \
+                range(candidate_range[2])):
+            xi = np.array([i,j,k],dtype=np.int)
+            a = xi - (cell_xyz + 1)
+            b = xi + cell_xyz + 1 - candidate_size
+            flag = 0
+            for elem in a*b:
+                if elem < 0:
+                    flag +=1
+            if flag == 3:
+               nb_cell_in_candidate_ijk += 1
+
+        if current%1 == 0:
             t2 = time.time()
             lap = t2 - t1
             t1 = t2
@@ -111,18 +126,20 @@ if __name__ == '__main__':
     start = time.time()
 
     #Main routine
-    #xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
-    #write_xyz('result.xyz', xyz)
+    xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
+    write_xyz('result.xyz', xyz, binary=True)
     #TODO Read automatically from image data
-    with open('result_binary.xyz','rb') as f:
+    print('Loading...')
+    with open('result_binary_list.xyz','rb') as f:
         xyz = pickle.load(f)
-    population_size   = np.array((1024, 1024, 130))
+    print('Counting...')
+    population_size   = np.array((1024, 1024, 130),dtype=np.int)
     population_volume = np.prod(population_size)
-    candidate_size    = np.array((128,   128,  32))
+    candidate_size    = np.array((128,   128,  32),dtype=np.int)
     candidate_range   = population_size - candidate_size + 1
     candidate_nb      = np.prod(candidate_range)
     candidate_volume  = np.prod(candidate_size)
-    result = count_cells(xyz, candidate_range, candidate_size)
+    #result = count_cells(xyz, candidate_range, candidate_size)
     with open('count_result','rb') as f:
         pickle.dump(result,f)
 
