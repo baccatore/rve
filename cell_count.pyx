@@ -19,7 +19,6 @@ def count(vector[vector[short]] xyz, \
     t1 = time.clock()
     total_xyz = len(xyz)
     for current_xyz, cell_xyz in enumerate(xyz):
-        #TODO Revise this loop
         for i in range(3):
             trgt_grd_rng[i]   = cell_xyz[i] - candidate_size[i]
             trgt_grd_rng[i+3] = cell_xyz[i]
