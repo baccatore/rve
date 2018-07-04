@@ -29,7 +29,7 @@ def read_pbm(file_name):
             f.readline()
             for i, xiyj in enumerate(yi):
                 #Input is as string
-                if xiyj == '1':
+                if xiyj == '0':
                     #Coordinate starts from 0
                     xyz.append([i+1,j+1,k+1])
     return xyz
@@ -44,17 +44,17 @@ def load_images(address):
     for i, file_name in enumerate(file_list):
         xyz += read_pbm(file_name)
         print('\rReading...', file_name, i+1, '/', nb_file, flush=True, end='')
+    print('\n')
     return xyz
 
 
-@jit
 def write_xyz(file_name, xyz, binary=False):
     print('\nWriting output...')
-    with open('result.xyz','w') as f:
+    with open(file_name,'w') as f:
         for line in xyz:
             coordinate = " ".join(map(str,line))
             f.write(coordinate + "\n")
     if binary:
         print('Writing output in binary...')
-        with open('result_binary.xyz','wb') as f:
+        with open('binary_'+file_name,'wb') as f:
            pickle.dump(xyz,f)
