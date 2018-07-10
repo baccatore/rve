@@ -78,25 +78,26 @@ def write_xyz(file_name, xyz, binary=False):
 
 if __name__ == '__main__':
     #Prologue: Run timer
-    start = time.time()
+    start = time.clock()
 
     #Main routine
-    xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
-    write_xyz('result.xyz', xyz)
+    #xyz = load_images('./eguchi_hangetsuban_ascii/*.pbm')
+    #write_xyz('result.xyz', xyz)
     #TODO Read automatically from image data
     with open('result_binary.xyz','rb') as f:
         xyz = pickle.load(f)
+    
     population_size   = np.array((1024, 1024, 130))
-    population_volume = np.prod(population_size)
+    #population_volume = np.prod(population_size)
     candidate_size    = np.array((128,   128,  32))
     candidate_range   = population_size - candidate_size + 1
-    candidate_nb      = np.prod(candidate_range)
-    candidate_volume  = np.prod(candidate_size)
+    #candidate_nb      = np.prod(candidate_range)
+    #candidate_volume  = np.prod(candidate_size)
     result = cell_count.count(xyz, candidate_range, candidate_size)
-    with open('count_result','rb') as f:
+    with open('count_result','wb') as f:
         pickle.dump(result,f)
 
     #FIXME Make me easier!
     #Epilogue
-    end = time.time() - start
+    end = time.clock() - start
     print('\033[32mEnd of program: Run time {0:.3f} sec\033[m'.format(end))
