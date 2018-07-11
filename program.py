@@ -38,7 +38,7 @@ if __name__ == '__main__':
     print('Population volume', population_volume)
 
     aspect = (1,1,1)
-    for seed in {511, 364, 256, 224, 192, 160, 128}:
+    for seed in {192, 160, 128}:
         print('-----------------')
         print('Counting:', seed)
         print(datetime.datetime.now())
