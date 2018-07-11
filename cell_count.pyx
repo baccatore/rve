@@ -37,8 +37,9 @@ def count(vector[vector[short]] xyz,
             elif  trgt_grd_rng[i+3] > candidate_range[i]:
                 trgt_grd_rng[i+3] = candidate_range[i]
 
-        for i, j, k in itertools.product( \
-                range(trgt_grd_rng[0], trgt_grd_rng[3]), \ range(trgt_grd_rng[1], trgt_grd_rng[4]), \
+        for i, j, k in itertools.product(
+                range(trgt_grd_rng[0], trgt_grd_rng[3]),
+                range(trgt_grd_rng[1], trgt_grd_rng[4]),
                 range(trgt_grd_rng[2], trgt_grd_rng[5])):
             ijk= i+j*candidate_range[0]+k*candidate_range[0]*candidate_range[1]
             nb_cell_in_candidate_ijk[ijk] += 1

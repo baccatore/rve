@@ -26,36 +26,35 @@ if __name__ == '__main__':
     print("Program prologue...")
 
     #Main routine
-    #xyz = util.load_images('./input_images/*.pbm')
-    #util.write_xyz('input.xyz', xyz, binary=True)
+    xyz = util.load_images('./input_images/*.pbm')
+    util.write_xyz('binary_input.xyz', xyz, binary=True)
 
-    print("Opening result_binary.xyz")
-    with open('binary_input.xyz','rb') as f:
-        xyz = pickle.load(f)
-    population_size   = np.ones(3)*512
+    #print("Opening result_binary.xyz")
+    #with open('binary_input.xyz','rb') as f:
+    #    xyz = pickle.load(f)
+    population_size   = np.ones(3)*1024
     population_volume = np.prod(population_size)
     print('Population size', population_size)
     print('Population volume', population_volume)
 
-    aspect = (1,1,1)
-    for seed in {192, 160, 128}:
-        print('-----------------')
-        print('Counting:', seed)
-        print(datetime.datetime.now())
-        candidate_size    = np.ones(3)*seed
-        candidate_range   = population_size - candidate_size + 1
-        candidate_nb      = np.prod(candidate_range)
-        candidate_volume  = np.prod(candidate_size)
-        result = cell_count.count(
-                xyz,
-                candidate_range,
-                candidate_size,
-                progress_plot_rate=10000)
+    seed = np.array({32,32,8})
+    print('-----------------')
+    print('Counting:', seed)
+    print(datetime.datetime.now())
+    candidate_size    = seed
+    candidate_range   = population_size - candidate_size + 1
+    candidate_nb      = np.prod(candidate_range)
+    candidate_volume  = np.prod(candidate_size)
+    result = cell_count.count(
+            xyz,
+            candidate_range,
+            candidate_size,
+            progress_plot_rate=10000)
 
-        print('\nWriting result in count_result...')
-        with open('count_result_'+str(aspect[0]),'w') as f:
-            f.writelines([ str(val)+'\n'  for val in result ])
-        print(datetime.datetime.now())
+    print('\nWriting result in count_result...')
+    with open('count_result_'+str(seed),'w') as f:
+        f.writelines([ str(val)+'\n'  for val in result ])
+    print(datetime.datetime.now())
 
     #Epilogue
     end = time.time() - start
