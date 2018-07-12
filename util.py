@@ -29,7 +29,7 @@ def read_pbm(file_name):
             f.readline()
             for i, xiyj in enumerate(yi):
                 #Input is as string
-                if xiyj == '0':
+                if xiyj == '1':
                     #Coordinate starts from 0
                     xyz.append([i+1,j+1,k+1])
     return xyz

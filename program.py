@@ -14,7 +14,7 @@ import datetime
 import pickle
 
 import numpy as np
-from joblib import Parallel, delayed
+#from joblib import Parallel, delayed
 
 import cell_count
 import util
@@ -26,18 +26,18 @@ if __name__ == '__main__':
     print("Program prologue...")
 
     #Main routine
-    xyz = util.load_images('./input_images/*.pbm')
-    util.write_xyz('binary_input.xyz', xyz, binary=True)
+    #xyz = util.load_images('./input_images/*.pbm')
+    #util.write_xyz('input.xyz', xyz, binary=True)
 
-    #print("Opening result_binary.xyz")
-    #with open('binary_input.xyz','rb') as f:
-    #    xyz = pickle.load(f)
-    population_size   = np.ones(3)*1024
+    print("Opening result_binary.xyz")
+    with open('binary_input.xyz','rb') as f:
+        xyz = pickle.load(f)
+    population_size   = np.array([1024,1024,130])
     population_volume = np.prod(population_size)
     print('Population size', population_size)
     print('Population volume', population_volume)
 
-    seed = np.array({32,32,8})
+    seed = np.array([32,32,8])
     print('-----------------')
     print('Counting:', seed)
     print(datetime.datetime.now())
