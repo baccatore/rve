@@ -13,8 +13,7 @@ def read_pbm(file_name):
 
     with open(file_name,'r') as f:
         if f.readline()[0:2] != 'P1':
-            #TODO raise error
-            print('\033[31mOnly P1 type pbm file is acceptable\033[m')
+            raise ValueError('\033[31mOnly P1 type pbm file is acceptable\033[m')
             return
         
         for line in f:
@@ -24,37 +23,38 @@ def read_pbm(file_name):
             break
 
         for j, line in enumerate(f):
-            #Array of cells in line y_i
+            #Take line number as y
             yi = line.split()
             f.readline()
-            for i, xiyj in enumerate(yi):
+            for i, pixel_value in enumerate(yi):
                 #Input is as string
-                if xiyj == '1':
-                    #Coordinate starts from 0
-                    xyz.append([i+1,j+1,k+1])
-    return xyz
+                if pixel_value == '1':
+                    xyz.append((i,j,k))
+    return (xyz, x_max, y_max)
 
 
-@jit
 def load_images(address):
-    xyz = []
+    xyz   = []
+    xyz_i = []
     file_list = glob.glob(address)
     nb_file = len(file_list)
     file_list.sort()
     for i, file_name in enumerate(file_list):
-        xyz += read_pbm(file_name)
-        print('\rReading...', file_name, i+1, '/', nb_file, flush=True, end='')
+        xyz_i, x_max, y_max = read_pbm(file_name)
+        xyz += xyz_i
+        print('\rReading... {0} {1:>3}/{2:<3}'.format(file_name, i+1, nb_file), flush=True, end='')
     print('\n')
-    return xyz
+    return (np.array([ [x,y,z] for x, y, z in xyz ]), np.array((x_max, y_max, nb_file) ))
 
 
 def write_xyz(file_name, xyz, binary=False):
-    print('\nWriting output...')
-    with open(file_name,'w') as f:
-        for line in xyz:
-            coordinate = " ".join(map(str,line))
-            f.write(coordinate + "\n")
+    
+    print('Writing ' + file_name + '...')
     if binary:
-        print('Writing output in binary...')
         with open('binary_'+file_name,'wb') as f:
            pickle.dump(xyz,f)
+    else :
+        with open(file_name,'w') as f:
+            for line in xyz:
+                coordinate = " ".join(map(str,line))
+            f.write(coordinate + "\n")

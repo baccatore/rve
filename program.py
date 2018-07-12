@@ -20,38 +20,44 @@ import cell_count
 import util
 
 
+use_binary_file = True
+
 if __name__ == '__main__':
     #Prologue: Run timer
     start = time.time()
     print("Program prologue...")
 
     #Main routine
-    #xyz = util.load_images('./input_images/*.pbm')
-    #util.write_xyz('input.xyz', xyz, binary=True)
+    if use_binary_file:
+        print("Opening result_binary.xyz")
+        with open('binary_input.xyz','rb') as f:
+            xyz, population_size = pickle.load(f)
+    else:
+        xyz, population_size = util.load_images('./input_images/*.pbm')
+        util.write_xyz('input.xyz', (xyz, population_size), binary=True)
 
-    print("Opening result_binary.xyz")
-    with open('binary_input.xyz','rb') as f:
-        xyz = pickle.load(f)
-    population_size   = np.array([1024,1024,130])
-    population_volume = np.prod(population_size)
-    print('Population size', population_size)
-    print('Population volume', population_volume)
 
     seed = np.array([32,32,8])
-    print('-----------------')
-    print('Counting:', seed)
-    print(datetime.datetime.now())
     candidate_size    = seed
     candidate_range   = population_size - candidate_size + 1
     candidate_nb      = np.prod(candidate_range)
     candidate_volume  = np.prod(candidate_size)
+    print('-----------------')
+    print('Start time      :',
+            datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+    print('Population size :', population_size)
+    print('Candidate size  :', candidate_size)
+    print('Candidate range :', candidate_range)
+    print('Candidate number:', candidate_nb)
+    print('Candidate volume:', candidate_volume)
+    print('Count starts')
     result = cell_count.count(
             xyz,
             candidate_range,
-            candidate_size,
-            progress_plot_rate=10000)
+            candidate_size)
+    print('-----------------')
 
-    print('\nWriting result in count_result...')
+    print('Writing result in count_result...')
     with open('count_result_'+str(seed),'w') as f:
         f.writelines([ str(val)+'\n'  for val in result ])
     print(datetime.datetime.now())

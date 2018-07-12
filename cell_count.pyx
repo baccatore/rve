@@ -11,7 +11,7 @@ cimport cython
 def count(vector[vector[short]] xyz,
         vector[unsigned short]  candidate_range,
         vector[unsigned short]  candidate_size,
-        short progress_plot_rate = 1000):
+        short progress_plot_rate = 10000):
     cdef int i, j, k
     cdef unsigned int total_xyz, current_xyz, ijk
     cdef vector[unsigned short] cell_xyz = [0]*3
@@ -23,10 +23,10 @@ def count(vector[vector[short]] xyz,
     for current_xyz, cell_xyz in enumerate(xyz):
         if current_xyz%progress_plot_rate == 0:
             t2 = time.clock()
-            print('\r\033[0KCounting... {0:>10}/{1} cells,'
-                    '{2:.1f}%, {3:.3f} sec per {4:,} loops'
+            print('Counting... {0:>10}/{1} cells, '
+                    '{2: 3.1f}%, {3: 3.1f} sec per {4:,} loops'
                     .format(current_xyz,total_xyz,current_xyz/total_xyz*100,
-                    t2-t1,progress_plot_rate),flush=True,end='')
+                    t2-t1,progress_plot_rate))
             t1 = t2
 
         for i in range(3):
