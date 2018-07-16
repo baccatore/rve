@@ -28,7 +28,7 @@ def read_pbm(file_name):
             f.readline()
             for i, pixel_value in enumerate(yi):
                 #Input is as string
-                if pixel_value == '1':
+                if pixel_value == '0':
                     xyz.append((i,j,k))
     return (xyz, x_max, y_max)
 
@@ -36,6 +36,7 @@ def read_pbm(file_name):
 def load_images(address):
     xyz   = []
     xyz_i = []
+    x_max = y_max = 0
     file_list = glob.glob(address)
     nb_file = len(file_list)
     file_list.sort()
@@ -43,18 +44,19 @@ def load_images(address):
         xyz_i, x_max, y_max = read_pbm(file_name)
         xyz += xyz_i
         print('\rReading... {0} {1:>3}/{2:<3}'.format(file_name, i+1, nb_file), flush=True, end='')
-    print('\n')
+    print('\n', x_max, y_max)
     return (np.array([ [x,y,z] for x, y, z in xyz ]), np.array((x_max, y_max, nb_file) ))
 
 
-def write_xyz(file_name, xyz, binary=False):
-    
+def write_xyz(file_name, data, binary=False):
     print('Writing ' + file_name + '...')
     if binary:
         with open('binary_'+file_name,'wb') as f:
-           pickle.dump(xyz,f)
+           pickle.dump(data,f)
     else :
+        xyz, population_size = data
         with open(file_name,'w') as f:
+            f.write('{0[0]} {0[1]} {0[2]}\n'.format(population_size))
             for line in xyz:
-                coordinate = " ".join(map(str,line))
-            f.write(coordinate + "\n")
+                f.write('{0[0]} {0[1]} {0[2]}\n'.format(line))
+
