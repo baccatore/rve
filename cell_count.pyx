@@ -27,9 +27,10 @@ cdef focus_method(vector[vector[int]] xyz,
         int progress_plot_rate):
     cdef int i, j, k
     cdef int current_xyz, total_xyz, ijk
-    cdef vector[int] cell_xyz = [0]*3
+    cdef vector[int] cell_xyz  = [0]*3
     cdef vector[long] nb_cell_in_candidate_ijk = [0]*np.prod(candidate_range)
-    cdef vector[int] trgt_grd_rng = [0]*3*2
+    cdef vector[int] start_end = [0]*3
+    cdef vector[int] stop_end  = [0]*3
 
     total_xyz = len(xyz)
     t = time.clock()
@@ -38,23 +39,20 @@ cdef focus_method(vector[vector[int]] xyz,
             t = print_progress(t, current_xyz, total_xyz, progress_plot_rate)
 
         for i in range(3):
-            trgt_grd_rng[i]   = cell_xyz[i] - candidate_size[i] - 1
-            trgt_grd_rng[i+3] = cell_xyz[i] + 1
-            if trgt_grd_rng[i] < 0:
-                trgt_grd_rng[i] = 0
-            if trgt_grd_rng[i+3] > candidate_range[i]:
-                trgt_grd_rng[i+3] = candidate_range[i]
+            start_end[i] = cell_xyz[i] - candidate_size[i] + 1
+            if start_end[i] < 0:
+                start_end[i] = 0
+
+            stop_end[i] = cell_xyz[i] + 1
+            if stop_end[i] > candidate_range[i]:
+                stop_end[i]  = candidate_range[i]
 
         for i, j, k in itertools.product(
-                range(trgt_grd_rng[0], trgt_grd_rng[3]),
-                range(trgt_grd_rng[1], trgt_grd_rng[4]),
-                range(trgt_grd_rng[2], trgt_grd_rng[5])):
+                range(start_end[0], stop_end[0]),
+                range(start_end[1], stop_end[1]),
+                range(start_end[2], stop_end[2])):
             ijk= i+j*candidate_range[0]+k*candidate_range[0]*candidate_range[1]
-            try :
-                nb_cell_in_candidate_ijk[ijk] += 1
-            except:
-                print(i,j,k)
-                raise ValueError('At', i, j, k)
+            nb_cell_in_candidate_ijk[ijk] += 1
         
     return nb_cell_in_candidate_ijk
 

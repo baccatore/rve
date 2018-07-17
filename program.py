@@ -35,18 +35,20 @@ if __name__ == '__main__':
     else:
         print('Reading image files...')
         xyz, population_size = util.load_images('./input_images/*.pbm')
-        util.write_xyz('input.xyz', (xyz, population_size), binary=False)
+        util.write_xyz('input.xyz', (xyz, population_size), binary=True)
 
 
     seed = np.array([1,1,1])
-    for i in range(128,129):
+    for i in range(1,129):
+        time_stamp \
+                = datetime.datetime \
+                .now().strftime("%Y/%m/%d %H:%M:%S")
         candidate_size    = seed*i
         candidate_range   = population_size - candidate_size + 1
         candidate_nb      = np.prod(candidate_range)
         candidate_volume  = np.prod(candidate_size)
         print('-----------------')
-        print('Start time      :',
-                datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
+        print('Start time      :', time_stamp)
         print('Population size :', population_size)
         print('Candidate size  :', candidate_size)
         print('Candidate range :', candidate_range)
@@ -62,7 +64,7 @@ if __name__ == '__main__':
         print('Writing result in count_result...')
         with open('count_result_{0:03d}'.format(i),'w') as f:
             f.writelines([ str(val)+'\n'  for val in result ])
-        print(datetime.datetime.now())
+        print(datetime.datetime.now().strftime("%Y/%m/%d %H:%M:%S"))
         print('-----------------')
 
     #Epilogue
