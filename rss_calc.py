@@ -39,20 +39,17 @@ if __name__ == '__main__':
 
     with open('rss_curve.txt', 'rb') as f:
         rss_i = pickle.load(f)
-    print(rss_i)
 
-    x_vec = [i for i in range(1,129)]
-    y_vec = []
-    y1 = y2 = .0
-    for y in rss_i:
-        y_vec.append(y1-y2)
-        y1, y2 = y2, y
+    rss_i = np.array(rss_i)
+
+    x_vec = np.array([i for i in range(1,129)])
+    y_vec = rss_i[:-1] - rss_i[1:] 
     plt.semilogy()
-    plt.plot(x_vec, y_vec)
-    plt.plot(x_vec, rss_i)
-    plt.plot([1,128], [.000001,.000001], color='black',linestyle='dashed', linewidth=.5)
-    plt.plot([1,128], [.00001,.00001], color='black',linestyle='dashed', linewidth=.5)
-    plt.plot([1,128], [.0001,.0001], color='black',linestyle='dashed', linewidth=.5)
-    plt.plot([1,128], [.001,.001], color='black',linestyle='dashed', linewidth=.5)
+    plt.xlim(1,127)
+    plt.xlabel('Candidate size [um]')
+    plt.ylabel('RSS')
+    plt.plot(x_vec, rss_i,'k--', linewidth=.8)
+    plt.plot(x_vec[:-1], y_vec,'k-', linewidth=.8)
+    plt.plot([1,128],[.00001,.00001],'r-',linewidth=.5)
     plt.savefig('image_def.png')
     plt.show()
