@@ -4,6 +4,7 @@ import glob
 import numpy as np
 from numba import jit
 
+# Read PBM file
 def read_pbm(file_name):
     xyz = []
     result = re.search(r'\d+\.pbm$', file_name)
